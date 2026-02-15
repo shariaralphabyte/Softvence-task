@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:location/location.dart';
+import 'package:softvence_app/constants/app_colors.dart';
 import 'package:softvence_app/features/alarm/screens/alarm_screen.dart';
 import 'package:softvence_app/features/location/services/location_service.dart';
 
@@ -12,34 +12,35 @@ class LocationScreen extends ConsumerStatefulWidget {
 }
 
 class _LocationScreenState extends ConsumerState<LocationScreen> {
-  String _locationMessage = "Location not fetched yet";
   bool _isLoading = false;
-  LocationData? _currentPosition;
 
   Future<void> _getLocation() async {
     setState(() {
       _isLoading = true;
-      _locationMessage = "Fetching location...";
     });
 
     try {
       final position = await ref.read(locationServiceProvider).determinePosition();
-      setState(() {
-        _currentPosition = position;
-        _locationMessage =
-            "Lat: ${position?.latitude}, Long: ${position?.longitude}";
-        _isLoading = false;
-      });
+      if (position != null) {
+        if (mounted) {
+           _navigateToAlarms(); 
+        }
+      }
     } catch (e) {
-      setState(() {
-        _locationMessage = "Error: $e";
-        _isLoading = false;
-      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: $e")));
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
   void _navigateToAlarms() {
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const AlarmScreen()),
     );
@@ -48,56 +49,98 @@ class _LocationScreenState extends ConsumerState<LocationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Location Access")),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.location_on, size: 80, color: Colors.blue),
-              const SizedBox(height: 24),
-              const Text(
-                "We need your location to proceed",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                _locationMessage,
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.grey),
-              ),
-              const SizedBox(height: 32),
-              if (_isLoading)
-                const CircularProgressIndicator()
-              else
-                Column(
-                  children: [
-                    ElevatedButton(
-                      onPressed: _getLocation,
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 32, vertical: 12),
-                      ),
-                      child: const Text("Get Location"),
-                    ),
-                    if (_currentPosition != null) ...[
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: _navigateToAlarms,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 32, vertical: 12),
-                        ),
-                        child: const Text("Continue to Alarms"),
-                      ),
-                    ]
-                  ],
+      extendBodyBehindAppBar: true,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: AppColors.mainGradient,
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 20),
+                const Text(
+                  "Welcome! Your Smart Travel Alarm",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    height: 1.2,
+                  ),
                 ),
-            ],
+                const SizedBox(height: 16),
+                const Text(
+                  "Stay on schedule and enjoy every moment of your journey.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white70,
+                    height: 1.5,
+                  ),
+                ),
+                
+                const Spacer(flex: 1),
+                
+                // Illustration Placeholder
+                Container(
+                  height: 250,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(20),
+                    image: const DecorationImage(
+                      image: AssetImage("assets/images/4.jpg"), 
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                
+                const Spacer(flex: 2),
+
+                // Use Current Location Button (Outlined/Glassy)
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: OutlinedButton(
+                    onPressed: _isLoading ? null : _getLocation,
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Colors.white30),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                    ),
+                    child: _isLoading 
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("Use Current Location", style: TextStyle(color: Colors.white, fontSize: 16)),
+                            SizedBox(width: 8),
+                            Icon(Icons.my_location, color: Colors.white, size: 20),
+                          ],
+                        ),
+                  ),
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Home Button (Filled)
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: _navigateToAlarms, // Manual skip to Home
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryPurple,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                    ),
+                    child: const Text("Home", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                  ),
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),

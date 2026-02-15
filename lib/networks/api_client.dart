@@ -1,5 +1,4 @@
 // Basic API Client Structure using http or dio (Placeholder for now)
-import 'dart:convert';
 // import 'package:http/http.dart' as http; // Uncomment when http package is added
 
 class ApiClient {
