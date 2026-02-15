@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:location/location.dart';
 import 'package:softvence_app/features/alarm/screens/alarm_screen.dart';
 import 'package:softvence_app/features/location/services/location_service.dart';
 
@@ -14,7 +14,7 @@ class LocationScreen extends ConsumerStatefulWidget {
 class _LocationScreenState extends ConsumerState<LocationScreen> {
   String _locationMessage = "Location not fetched yet";
   bool _isLoading = false;
-  Position? _currentPosition;
+  LocationData? _currentPosition;
 
   Future<void> _getLocation() async {
     setState(() {

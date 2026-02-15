@@ -1,45 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:timezone/data/latest_all.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
-import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:softvence_app/features/onboarding/screens/onboarding_screen.dart';
+import 'package:softvence_app/helpers/app_initializer.dart';
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Initialize Timezones with robust error handling
-  try {
-    tz.initializeTimeZones();
-    final timeZoneName = await FlutterTimezone.getLocalTimezone();
-    String locationName = timeZoneName.toString();
-    
-    // Fix for "TimezoneInfo(Asia/Dhaka, ...)" format
-    if (locationName.contains("TimezoneInfo")) {
-      final parts = locationName.split('(');
-      if (parts.length > 1) {
-        locationName = parts[1].split(',')[0];
-      }
-    }
-    
-    debugPrint("Setting timezone to: $locationName");
-    tz.setLocalLocation(tz.getLocation(locationName));
-  } catch (e) {
-    debugPrint("Using default timezone (UTC) due to error: $e");
-    // Fallback to UTC or rely on default
-    try {
-      tz.setLocalLocation(tz.getLocation('UTC'));
-    } catch (_) {}
-  }
-  
-  await Hive.initFlutter();
-  await Hive.openBox<String>('alarms'); 
   runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late final Future<void> _initFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _initFuture = AppInitializer.init();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +33,40 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      home: const OnboardingScreen(),
+      home: FutureBuilder(
+        future: _initFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return const OnboardingScreen();
+          } else {
+            return const SplashScreen();
+          }
+        },
+      ),
+    );
+  }
+}
+
+class SplashScreen extends StatelessWidget {
+  const SplashScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      backgroundColor: Colors.white,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Can replace with Logo asset later
+            Icon(Icons.access_alarm, size: 80, color: Colors.blue),
+            SizedBox(height: 24),
+            CircularProgressIndicator(),
+            SizedBox(height: 16),
+            Text("Softvence", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          ],
+        ),
+      ),
     );
   }
 }
