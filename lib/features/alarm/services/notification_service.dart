@@ -50,37 +50,38 @@ class NotificationService {
   Future<void> scheduleAlarm(int id, DateTime scheduledTime, String title, String body) async {
     await _initFuture;
     final tzDateTime = tz.TZDateTime.from(scheduledTime, tz.local);
+    
     debugPrint("Scheduling alarm $id for $scheduledTime");
-    debugPrint("Converted TZDateTime: $tzDateTime");
-    debugPrint("Current TZ Time: ${tz.TZDateTime.now(tz.local)}");
     
     try {
-    await _notificationsPlugin.zonedSchedule(
-      id: id,
-      title: title,
-      body: body,
-      scheduledDate: tzDateTime,
-      notificationDetails: const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'alarm_channel_id_v2',
-          'Alarms',
-          channelDescription: 'Channel for Alarm Notifications',
-          importance: Importance.max,
-          priority: Priority.high,
-          playSound: true,
-          enableVibration: true,
-          fullScreenIntent: true,
+      await _notificationsPlugin.zonedSchedule(
+        id: id,
+        title: title,
+        body: body,
+        scheduledDate: tzDateTime,
+        notificationDetails: const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'softvence_alarm_channel',
+            'Softvence Alarms',
+            channelDescription: 'Priority Channel for Travel Alarms',
+            importance: Importance.max,
+            priority: Priority.max,
+            playSound: true,
+            enableVibration: true,
+            fullScreenIntent: true,
+            category: AndroidNotificationCategory.alarm,
+            visibility: NotificationVisibility.public,
+          ),
+          iOS: DarwinNotificationDetails(
+            presentAlert: true,
+            presentBadge: true,
+            presentSound: true,
+            interruptionLevel: InterruptionLevel.critical,
+          ),
         ),
-        iOS: DarwinNotificationDetails(
-          presentAlert: true,
-          presentBadge: true,
-          presentSound: true,
-        ),
-      ),
-      androidScheduleMode: AndroidScheduleMode.alarmClock,
-    );
-    debugPrint("Alarm scheduled successfully");
-    debugPrint("Alarm scheduled successfully");
+        androidScheduleMode: AndroidScheduleMode.alarmClock,
+      );
+      debugPrint("Alarm scheduled successfully");
     } catch (e) {
       debugPrint("Error scheduling alarm: $e");
     }
@@ -89,23 +90,5 @@ class NotificationService {
   Future<void> cancelAlarm(int id) async {
     await _notificationsPlugin.cancel(id: id);
   }
-
-  Future<void> showInstantNotification(String title, String body) async {
-    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-      'alarm_channel_id_v2',
-      'Alarms',
-      channelDescription: 'Channel for Alarm Notifications',
-      importance: Importance.max,
-      priority: Priority.high,
-      playSound: true,
-      enableVibration: true,
-    );
-    const NotificationDetails details = NotificationDetails(android: androidDetails);
-    await _notificationsPlugin.show(
-      id: 0,
-      title: title,
-      body: body,
-      notificationDetails: details,
-    );
-  }
 }
+

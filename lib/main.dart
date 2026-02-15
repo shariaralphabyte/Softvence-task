@@ -5,11 +5,16 @@ import 'package:softvence_app/helpers/app_initializer.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const ProviderScope(child: MyApp()));
+  final container = ProviderContainer();
+  runApp(UncontrolledProviderScope(
+    container: container,
+    child: MyApp(container: container),
+  ));
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  final ProviderContainer container;
+  const MyApp({super.key, required this.container});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -21,7 +26,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    _initFuture = AppInitializer.init();
+    _initFuture = AppInitializer.init(widget.container);
   }
 
   @override
@@ -46,6 +51,7 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
