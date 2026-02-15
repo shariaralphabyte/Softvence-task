@@ -78,7 +78,6 @@ class NotificationService {
         ),
       ),
       androidScheduleMode: AndroidScheduleMode.alarmClock,
-      matchDateTimeComponents: DateTimeComponents.time,
     );
     debugPrint("Alarm scheduled successfully");
     debugPrint("Alarm scheduled successfully");

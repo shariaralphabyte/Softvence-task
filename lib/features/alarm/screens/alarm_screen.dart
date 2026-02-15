@@ -19,6 +19,9 @@ class _AlarmScreenState extends ConsumerState<AlarmScreen> {
   void initState() {
     super.initState();
     _alarmBox = Hive.box<String>('alarms');
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(notificationServiceProvider).requestPermissions();
+    });
   }
 
   Future<void> _addAlarm() async {

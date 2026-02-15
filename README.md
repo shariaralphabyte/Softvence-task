@@ -1,82 +1,86 @@
 # Softvence App
 
-A Flutter application featuring a seamless onboarding experience, location services integration, and a local alarm system with notifications. Built based on the provided Figma design requirements.
+A professional Flutter application featuring a premium UI, seamless onboarding, location services, and a robust date/time-based alarm system.
 
-## Features
+## 🎨 Premium UI Redesign
+The app has been completely redesigned with a high-end look:
+- **Custom Gradient Background**: Sleek `#082257` to `#0B0024` transition.
+- **Glassmorphic UI**: Transparent cards and inputs for a modern feel.
+- **Interactive Onboarding**: A 3-page introduction with high-quality imagery and smooth indicators.
+- **Smart Experience**: Context-aware location requests and professional system dialogs.
 
+## 🚀 Key Features
+
+- **Optimized Startup**: Custom Splash Screen and non-blocking background initialization for instant app response.
 - **Onboarding Flow**: 
-  - Three distinct screens guiding the user through the app's value proposition.
-  - "Skip" functionality to bypass onboarding.
-  - Smooth page transitions and dot indicators.
-
-- **Location Services**:
-  - Requests user permission to access device location.
-  - Fetches and displays current latitude and longitude coordinates.
-  - Handles permission denial gracefully.
-
+  - Educational screens with "Skip" and "Next/Get Started" functionality.
+- **Smart Location Integration**:
+  - Uses the native **GMS Location Request Dialog** (Google Maps style) to enable GPS effortlessly.
+  - Graceful permission handling and error feedback.
 - **Alarms & Notifications**:
-  - Schedule local alarms using a native time picker.
-  - Persist alarms locally using **Hive** database.
-  - Trigger local notifications at the scheduled time using **Flutter Local Notifications**.
-  - List view to manage and delete active alarms.
+  - **Date & Time Selection**: Choose a specific date and time for your alarm.
+  - **Accurate Scheduling**: Leverages timezone processing for universal reliability.
+  - **Persistence**: Alarms are saved using **Hive** for fast, reliable local storage.
+  - **Rich Notifications**: High-priority alarm notifications with vibration and sound support.
 
-## Tech Stack
+## 🛠 Tech Stack & Tools
 
-- **Framework**: Flutter (Dart)
-- **State Management**: [flutter_riverpod](https://pub.dev/packages/flutter_riverpod)
-- **Local Storage**: [hive](https://pub.dev/packages/hive) & [hive_flutter](https://pub.dev/packages/hive_flutter)
+- **Framework**: [Flutter](https://flutter.dev) (Dart)
+- **State Management**: [Riverpod](https://riverpod.dev) (Standard for senior Flutter development)
+- **Local Storage**: [Hive](https://docs.hivedb.dev) (High-performance NoSQL database)
 - **Notifications**: [flutter_local_notifications](https://pub.dev/packages/flutter_local_notifications)
-- **Location**: [geolocator](https://pub.dev/packages/geolocator)
-- **Timezone**: [timezone](https://pub.dev/packages/timezone) for accurate scheduling.
-- **Permissions**: [permission_handler](https://pub.dev/packages/permission_handler)
+- **Location**: [location](https://pub.dev/packages/location) (Chosen for professional resolution dialogs)
+- **Timezone Support**: [timezone](https://pub.dev/packages/timezone) & [flutter_timezone](https://pub.dev/packages/flutter_timezone)
+- **Date Formatting**: [intl](https://pub.dev/packages/intl)
 
-## Project Structure
+## 🏗 Project Structure
 
 ```
 lib/
-├── common_widgets/    # Reusable UI components
-├── constants/         # App constants (strings, colors, etc.)
-├── features/          # Feature-based architecture
-│   ├── alarm/         # Alarm screens and services
-│   ├── location/      # Location screens and services
-│   └── onboarding/    # Onboarding screens and widgets
-├── helpers/           # Utility functions
-├── networks/          # Network layer (if applicable)
-└── main.dart          # Entry point
+├── common_widgets/    # Atomic reusable UI components (Buttons, etc.)
+├── constants/         # App constants, shared colors, and theme data
+├── features/          # Clean Architecture: Feature-first structure
+│   ├── alarm/         # Alarm screens, services, and models
+│   ├── location/      # Location services and screens
+│   └── onboarding/    # User onboarding journey
+├── helpers/           # Initialization and utility logic (Startup, LocationHelper)
+├── networks/          # Base API Client structure
+└── main.dart          # App entry point with ProviderScope
 ```
 
-## Setup & Installation
+## ⚙️ Setup & Installation
 
-1.  **Prerequisites**: Ensure you have Flutter installed and set up for your platform (Android/iOS).
+1.  **Prerequisites**: 
+    - Install [Flutter SDK](https://docs.flutter.dev/get-started/install).
+    - Ensure an Android Emulator or iOS Simulator is running.
 
-2.  **Clone the repository** (or navigate to the project folder):
+2.  **Clone & Navigate**:
     ```bash
     cd Softvence
     ```
 
-3.  **Install dependencies**:
+3.  **Install Packages**:
     ```bash
     flutter pub get
     ```
 
-4.  **Run the app**:
+4.  **Run Application**:
     ```bash
     flutter run
     ```
 
-## Permissions
+## 🔐 Configuration & Permissions
 
 ### Android
-Permissions are handled in `AndroidManifest.xml`. The app requires:
-- `ACCESS_FINE_LOCATION`
-- `ACCESS_COARSE_LOCATION`
-- `POST_NOTIFICATIONS`
-- `SCHEDULE_EXACT_ALARM`
+Managed in `AndroidManifest.xml`:
+- `INTERNET`: For network tasks.
+- `ACCESS_FINE_LOCATION`: For high-accuracy GPS.
+- `POST_NOTIFICATIONS`: For Android 13+ alerts.
+- `SCHEDULE_EXACT_ALARM`: For precise alarm timing.
 
 ### iOS
-Permissions are handled in `Info.plist`. The app requires:
-- `NSLocationWhenInUseUsageDescription`
+Managed in `Info.plist`:
+- `NSLocationWhenInUseUsageDescription`: Required for location access.
 
-## Notes
-- The app uses **Hive** for lightweight local storage of alarm times.
-- Notifications are scheduled to repeat daily at the selected time (code logic in `NotificationService`).
+---
+Built with ❤️ by Softvence Team.
