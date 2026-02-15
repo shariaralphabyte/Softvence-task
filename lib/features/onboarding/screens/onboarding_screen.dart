@@ -17,17 +17,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     {
       "title": "Syncing with nature’s rhythm",
       "description": "Align your day with the natural flow of time.",
-      "image": "assets/image1.png"
+      "image": "assets/images/1.png"
     },
     {
       "title": "Effortless and automatic syncing",
       "description": "Let the app handle the details while you focus on living.",
-      "image": "assets/image2.png"
+      "image": "assets/images/2.png"
     },
     {
       "title": "Relaxation and unwinding",
       "description": "Find peace and tranquility in your daily routine.",
-      "image": "assets/image3.png"
+      "image": "assets/images/3.png"
     },
   ];
 

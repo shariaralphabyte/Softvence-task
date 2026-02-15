@@ -24,10 +24,16 @@ class OnboardingContent extends StatelessWidget {
             height: 300,
             width: double.infinity,
             decoration: BoxDecoration(
-              color: Colors.grey[200],
+              // color: Colors.grey[200], // Removed background color
               borderRadius: BorderRadius.circular(20),
             ),
-            child: const Icon(Icons.image, size: 100, color: Colors.grey),
+            child: Image.asset(
+              imagePath,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) {
+                return const Icon(Icons.broken_image, size: 100, color: Colors.grey);
+              },
+            ),
           ),
           const SizedBox(height: 40),
           Text(

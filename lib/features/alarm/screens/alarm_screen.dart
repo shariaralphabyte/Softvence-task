@@ -18,6 +18,9 @@ class _AlarmScreenState extends ConsumerState<AlarmScreen> {
   void initState() {
     super.initState();
     _alarmBox = Hive.box<String>('alarms');
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(notificationServiceProvider).requestPermissions();
+    });
   }
 
   Future<void> _addAlarm() async {
@@ -46,18 +49,33 @@ class _AlarmScreenState extends ConsumerState<AlarmScreen> {
       // Save to Hive
       final id = await _alarmBox.add(scheduledDate.toIso8601String());
 
-      // Schedule Notification
-      ref.read(notificationServiceProvider).scheduleAlarm(
-            id,
-            scheduledDate,
-            "Alarm",
-            "It's $formattedTime!",
+      // Attempt to schedule
+      try {
+        await ref.read(notificationServiceProvider).scheduleAlarm(
+              id,
+              scheduledDate,
+              "Alarm",
+              "It's $formattedTime!",
+            );
+        
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Alarm set for $formattedTime")),
           );
-      
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Alarm set for $formattedTime")),
-        );
+        }
+      } catch (e) {
+        if (mounted) {
+           showDialog(
+             context: context,
+             builder: (context) => AlertDialog(
+               title: const Text("Error Scheduling"),
+               content: Text("Could not set alarm: $e"),
+               actions: [
+                 TextButton(onPressed: () => Navigator.pop(context), child: const Text("OK")),
+               ],
+             ),
+           );
+        }
       }
     }
   }
